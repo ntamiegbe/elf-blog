@@ -2,13 +2,15 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Header from '../Components/Header'
 import Banner from '../Components/Banner'
-import {sanityClient, urlFor} from '../sanity'
+import { sanityClient, urlFor } from '../sanity'
+import { Post } from '../typings'
 
 interface Props {
   posts: [Post]
 }
 
-const Home: NextPage = (props: Props) => {
+const Home = ({ posts }: Props) => {
+  console.log(posts);
   return (
     <div className="font-serif max-w-7xl mx-auto">
       <Head>
@@ -19,14 +21,14 @@ const Home: NextPage = (props: Props) => {
       <Header />
 
       <Banner />
-      
+
     </div>
   )
 }
 
 export default Home
 
-export const getServerSideProps = async() => {
+export const getServerSideProps = async () => {
   const query = `*[_type == 'post']{
   _id,
     title,
