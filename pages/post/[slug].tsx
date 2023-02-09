@@ -3,22 +3,40 @@ import { sanityClient, urlFor } from '../../sanity'
 import { Post } from '../../typings'
 import { GetStaticProps } from 'next'
 import PortableText from 'react-portable-text'
+import { useForm, SubmitHandler } from "react-hook-form";
+
+interface InputForm {
+    _id: string;
+    name: string;
+    email: string;
+    comment: string;
+}
 
 interface Props {
     post: Post
 }
 
 const Post = ({ post }: Props) => {
+
+    const { register, handleSubmit, formState: { errors } } = useForm < InputForm > ()
+
+    const onSubmit: SubmitHandler<InputForm> = async (data) => {
+        await fetch('/api/createComment', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        })
+    }
+
     return (
         <main>
             <Header />
             <img src={urlFor(post.mainImage).url()!} alt={post.title} className='h-[300px] w-full object-cover' />
 
             <article className='max-w-3xl mx-auto'>
-                <h1 className='text-3xl mt-10 mb-3 capitalize'>{post.title}</h1>
-                <h2 className='text-xl font-light text-gray-500 mb-2'>{post.description}</h2>
+                <h1 className='text-3xl mt-10 mb-3 px-2 md:px-0 capitalize'>{post.title}</h1>
+                <h2 className='text-xl font-light px-2 md:px-0 text-gray-500 mb-2'>{post.description}</h2>
 
-                <div className="flex space-x-2 items-center">
+                <div className="flex space-x-2 px-2 md:px-0 items-center">
                     <img src={urlFor(post.author.image).url()!} alt={post.author.name} className='h-10 w-10 rounded-full' />
                     <p className='font-extralight text-sm'>
                         Blog post by <span className='font-semibold'> {post.author.name} </span>- Published at {new Date(post._createdAt).toLocaleDateString()}
@@ -48,7 +66,42 @@ const Post = ({ post }: Props) => {
                 </div>
             </article>
 
-            <hr className='max-w-lg my-5 mx-auto border border-blue-300'/>
+            <hr className='max-w-lg my-5 mx-auto border border-blue-300' />
+
+            <form className='flex flex-col max-w-2xl mx-auto p-5 my-8' onSubmit={handleSubmit(onSubmit)}>
+                <h3 className='text-sm text-blue-700'>Enjoyed the article?</h3>
+                <h4 className='text-3xl font-bold mb-5'>Leave a comment below</h4>
+
+                <input type="hidden" {...register('_id')} name='_id' value={post._id} />
+
+                <label className='block mb-5'>
+                    <span>Name</span>
+                    <input {...register('name', { required: true })} className='shadow-sm block w-full outline-none form-input rounded py-2 px-4' type="text" placeholder='Name' />
+                </label>
+                <label className='block mb-5'>
+                    <span>Email</span>
+                    <input {...register('email', { required: true })} className='shadow-sm block w-full outline-none form-input rounded py-2 px-4' type="email" placeholder='E-mail' />
+                </label>
+                <label className='block mb-5'>
+                    <span>Comment</span>
+                    <textarea {...register('comment', { required: true })} className='shadow-sm outline-none border rounded py-2 px-4 form-textarea mt-2 block w-full' rows={8} placeholder='Comment' />
+                </label>
+
+
+                <div className="flex flex-col p-5">
+                    {errors.name && (
+                        <span className='text-red-500'>The name field is required</span>
+                    )}
+                    {errors.comment && (
+                        <span className='text-red-500'>The comment field is required</span>
+                    )}
+                    {errors.email && (
+                        <span className='text-red-500'>The email field is required</span>
+                    )}
+                </div>
+
+                <input onSubmit={handleSubmit(onSubmit)} type="submit" className='cursor-pointer text-blue-700 border border-blue-900 px-4 py-1 rounded-sm font-bold hover:bg-blue-900 hover:text-white' />
+            </form>
         </main>
     )
 }
