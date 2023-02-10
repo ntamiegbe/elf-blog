@@ -24,13 +24,17 @@ const Post = ({ post }: Props) => {
         await fetch('/api/createComment', {
             method: 'POST',
             body: JSON.stringify(data)
+        }).then(() => {
+            console.log(data)
+        }).catch((err) => {
+            console.error(err)
         })
     }
 
     return (
         <main>
             <Header />
-            <img src={urlFor(post.mainImage).url()!} alt={post.title} className='h-[300px] w-full object-cover' />
+            <img src={urlFor(post.mainImage).url()!} alt={post.title} className='h-[50vh] w-full object-cover' />
 
             <article className='max-w-3xl mx-auto'>
                 <h1 className='text-3xl mt-10 mb-3 px-2 md:px-0 capitalize'>{post.title}</h1>
@@ -43,7 +47,7 @@ const Post = ({ post }: Props) => {
                     </p>
                 </div>
 
-                <div className="mt-10">
+                <div className="mt-10 p-4 md:p-0">
                     <PortableText
                         dataset={process.env.NEXT_PUBLIC_SANITY_DATASET!}
                         projectId={process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!}
@@ -59,8 +63,11 @@ const Post = ({ post }: Props) => {
                                 <li className='ml-4 list-disc'> {...children} </li>
                             ),
                             link: ({ children, href }: any) => (
-                                <a href={href} className='font-semibold hover:underline'> {...children} </a>
+                                <a href={href} className='font-semibold hover:underline my-4'> {...children} </a>
                             ),
+                            img: () => (
+                                <img className='my-8' />
+                            )
                         }}
                     />
                 </div>
