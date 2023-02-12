@@ -24,8 +24,8 @@ export default defineType({
         }),
         defineField({
             name: 'post',
-            type: 'array',
-            of: [{ type: 'reference', to: { type: 'post' } }],
-        }),
+            type: 'reference',
+            to: [{ type: 'post' }],
+        })
     ]
 })

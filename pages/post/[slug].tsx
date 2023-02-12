@@ -4,6 +4,7 @@ import { Post } from '../../typings'
 import { GetStaticProps } from 'next'
 import PortableText from 'react-portable-text'
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useState } from 'react'
 
 interface InputForm {
     _id: string;
@@ -18,6 +19,8 @@ interface Props {
 
 const Post = ({ post }: Props) => {
 
+    const [submitted, setSubmitted] = useState(false)
+
     const { register, handleSubmit, formState: { errors } } = useForm < InputForm > ()
 
     const onSubmit: SubmitHandler<InputForm> = async (data) => {
@@ -26,8 +29,10 @@ const Post = ({ post }: Props) => {
             body: JSON.stringify(data)
         }).then(() => {
             console.log(data)
+            setSubmitted(true)
         }).catch((err) => {
             console.error(err)
+            setSubmitted(false)
         })
     }
 
@@ -75,41 +80,60 @@ const Post = ({ post }: Props) => {
 
             <hr className='max-w-lg my-5 mx-auto border border-blue-300' />
 
-            <form className='flex flex-col max-w-2xl mx-auto p-5 my-8' onSubmit={handleSubmit(onSubmit)}>
-                <h3 className='text-sm text-blue-700'>Enjoyed the article?</h3>
-                <h4 className='text-3xl font-bold mb-5'>Leave a comment below</h4>
-
-                <input type="hidden" {...register('_id')} name='_id' value={post._id} />
-
-                <label className='block mb-5'>
-                    <span>Name</span>
-                    <input {...register('name', { required: true })} className='shadow-sm block w-full outline-none form-input rounded py-2 px-4' type="text" placeholder='Name' />
-                </label>
-                <label className='block mb-5'>
-                    <span>Email</span>
-                    <input {...register('email', { required: true })} className='shadow-sm block w-full outline-none form-input rounded py-2 px-4' type="email" placeholder='E-mail' />
-                </label>
-                <label className='block mb-5'>
-                    <span>Comment</span>
-                    <textarea {...register('comment', { required: true })} className='shadow-sm outline-none border rounded py-2 px-4 form-textarea mt-2 block w-full' rows={8} placeholder='Comment' />
-                </label>
-
-
-                <div className="flex flex-col p-5">
-                    {errors.name && (
-                        <span className='text-red-500'>The name field is required</span>
-                    )}
-                    {errors.comment && (
-                        <span className='text-red-500'>The comment field is required</span>
-                    )}
-                    {errors.email && (
-                        <span className='text-red-500'>The email field is required</span>
-                    )}
+            {submitted ? (
+                <div className="flex flex-col my-10 p-10 bg-blue-900 text-white mx-auto max-w-2xl rounded">
+                    <h3 className='text-3xl font-bold'>Thank you for submitting your comment</h3>
+                    <p>Once it has been apporved, it will appear below</p>
                 </div>
+            ) : (
+                <form className='flex flex-col max-w-2xl mx-auto p-5 my-8' onSubmit={handleSubmit(onSubmit)}>
+                        <h3 className='text-sm text-gray-500'>Enjoyed the article?</h3>
+                    <h4 className='text-3xl font-bold mb-5'>Leave a comment below</h4>
 
-                <input onSubmit={handleSubmit(onSubmit)} type="submit" className='cursor-pointer text-blue-700 border border-blue-900 px-4 py-1 rounded-sm font-bold hover:bg-blue-900 hover:text-white' />
-            </form>
-        </main>
+                    <input type="hidden" {...register('_id')} name='_id' value={post._id} />
+
+                    <label className='block mb-5'>
+                        <span>Name</span>
+                        <input {...register('name', { required: true })} className='shadow-sm block w-full outline-none form-input rounded py-2 px-4' type="text" placeholder='Name' />
+                    </label>
+                    <label className='block mb-5'>
+                        <span>Email</span>
+                        <input {...register('email', { required: true })} className='shadow-sm block w-full outline-none form-input rounded py-2 px-4' type="email" placeholder='E-mail' />
+                    </label>
+                    <label className='block mb-5'>
+                        <span>Comment</span>
+                        <textarea {...register('comment', { required: true })} className='shadow-sm outline-none border rounded py-2 px-4 form-textarea mt-2 block w-full' rows={8} placeholder='Comment' />
+                    </label>
+
+
+                    <div className="flex flex-col p-5">
+                        {errors.name && (
+                            <span className='text-red-500'>The name field is required</span>
+                        )}
+                        {errors.comment && (
+                            <span className='text-red-500'>The comment field is required</span>
+                        )}
+                        {errors.email && (
+                            <span className='text-red-500'>The email field is required</span>
+                        )}
+                    </div>
+
+                    <input onSubmit={handleSubmit(onSubmit)} type="submit" className='cursor-pointer text-blue-700 border border-blue-900 px-4 py-1 rounded-sm font-bold hover:bg-blue-900 hover:text-white' />
+                </form >
+            )}
+
+            <div className="flex flex-col p-10 my-10 max-w-2xl mx-auto">
+                <h3 className='text-3xl font-bold mb-2'>Comments</h3>
+                <hr className='my-5 border border-blue-300' />
+
+                {post.comments.map((comment) => (
+                    <div className="" key={comment._id}>
+                        <p><span className='font-bold'>{comment.name}:</span> {comment.comment}</p>
+                    </div>
+                ))}
+
+            </div>
+        </main >
     )
 }
 
@@ -140,7 +164,7 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     // Populate the information for the page
-    const query = `*[_type == 'post' && slug.current == 'first-blog-post'][0]{
+    const query = `*[_type == 'post' && slug.current == $slug][0]{
         _id,
         _createdAt,
         title,
@@ -149,6 +173,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
             image
         },
         slug,
+        'comments': *[
+            _type == 'comment' && post._ref == ^._id &&
+            approved == true
+        ],
         description,
         mainImage,
         body
