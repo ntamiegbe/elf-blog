@@ -14,7 +14,7 @@ const Home = ({ posts }: Props) => {
   return (
     <div className="font-serif max-w-7xl mx-auto">
       <Head>
-        <title>Egbe Literacy Foundation | Blog</title>
+        <title>Veritas University Journal of Humanities | Home</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
