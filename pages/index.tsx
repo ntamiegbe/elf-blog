@@ -12,7 +12,7 @@ interface Props {
 
 const Home = ({ posts }: Props) => {
   return (
-    <div className="font-serif max-w-7xl mx-auto">
+    <div className="font-serif">
       <Head>
         <title>Veritas University Journal of Humanities | Home</title>
         <link rel="icon" href="/favicon.ico" />
@@ -22,7 +22,7 @@ const Home = ({ posts }: Props) => {
 
       <Banner />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 p-2 md:p-6 my-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 p-2 md:p-6 my-5 mx-auto max-w-7xl">
         {posts.map(post => (
           <Link key={post._id} href={`/post/${post.slug.current}`}>
             <div className='group cursor-pointer border rounded-xl shadow overflow-hidden'>

@@ -17,7 +17,7 @@ interface Props {
     post: Post
 }
 
-const Post = ({ post }: Props) => {
+const Posts = ({ post }: Props) => {
 
     const [submitted, setSubmitted] = useState(false)
 
@@ -62,32 +62,29 @@ const Post = ({ post }: Props) => {
                                 <h1 className='text-2xl font-bold my-5' {...props} />
                             ),
                             h2: (props: any) => (
-                                <h2 className='text-xl font-bold my-5' {...props} />
+                                <h2 className='text-xl font-bold my-5 text-green-700' {...props} />
                             ),
                             li: ({ children }: any) => (
                                 <li className='ml-4 list-disc'> {...children} </li>
                             ),
                             link: ({ children, href }: any) => (
                                 <a href={href} className='font-semibold hover:underline my-4'> {...children} </a>
-                            ),
-                            img: () => (
-                                <img className='my-8' />
                             )
                         }}
                     />
                 </div>
             </article>
 
-            <hr className='max-w-lg my-5 mx-auto border border-blue-300' />
+            <hr className='max-w-lg my-5 mx-auto border border-green-600' />
 
             {submitted ? (
-                <div className="flex flex-col my-10 p-10 bg-blue-900 text-white mx-auto max-w-2xl rounded">
+                <div className="flex flex-col my-10 p-10 bg-green-900 text-white mx-auto max-w-2xl rounded">
                     <h3 className='text-3xl font-bold'>Thank you for submitting your comment</h3>
                     <p>Once it has been apporved, it will appear below</p>
                 </div>
             ) : (
-                <form className='flex flex-col max-w-2xl mx-auto p-5 my-8' onSubmit={handleSubmit(onSubmit)}>
-                        <h3 className='text-sm text-gray-500'>Enjoyed the article?</h3>
+                <form className='flex flex-col max-w-2xl mx-auto p-5 my-6' onSubmit={handleSubmit(onSubmit)}>
+                    <h3 className='text-base text-gray-500'>Enjoyed the article?</h3>
                     <h4 className='text-3xl font-bold mb-5'>Leave a comment below</h4>
 
                     <input type="hidden" {...register('_id')} name='_id' value={post._id} />
@@ -118,13 +115,13 @@ const Post = ({ post }: Props) => {
                         )}
                     </div>
 
-                    <input onSubmit={handleSubmit(onSubmit)} type="submit" className='cursor-pointer text-blue-700 border border-blue-900 px-4 py-1 rounded-sm font-bold hover:bg-blue-900 hover:text-white' />
+                    <input onSubmit={handleSubmit(onSubmit)} type="submit" className='cursor-pointer text-green-700 border border-green-900 px-4 py-1 rounded-sm font-bold hover:bg-green-900 hover:text-white' />
                 </form >
             )}
 
             <div className="flex flex-col p-10 my-10 max-w-2xl mx-auto">
                 <h3 className='text-3xl font-bold mb-2'>Comments</h3>
-                <hr className='my-5 border border-blue-300' />
+                <hr className='my-5 border border-green-600' />
 
                 {post.comments.map((comment) => (
                     <div className="" key={comment._id}>
@@ -137,7 +134,7 @@ const Post = ({ post }: Props) => {
     )
 }
 
-export default Post
+export default Posts
 
 export const getStaticPaths = async () => {
     // Find the paths or pages that exists
