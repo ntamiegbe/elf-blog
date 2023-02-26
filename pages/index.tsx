@@ -22,7 +22,7 @@ const Home = ({ posts }: Props) => {
 
       <Banner />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 p-2 md:p-6 my-5 mx-auto max-w-7xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 p-8 md:p-6 my-5 mx-auto max-w-7xl" id="posts">
         {posts.map(post => (
           <Link key={post._id} href={`/post/${post.slug.current}`}>
             <div className='group cursor-pointer border rounded-xl shadow overflow-hidden'>
